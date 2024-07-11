@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title src="./images/icon.png">Weathernaut</title>
+    
+    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+</head>
+<body>
+    
+    <header class="header">
+        <div class="logo">Weathernaut</div>
+        <nav class="navigation">
+            <ul>
+                <li><a href="#current-weather">Current Weather</a></li>
+                <li><a href="#forecast">Forecast</a></li>
+                <li><a href="#maps">Weather Maps</a></li>
+                
+            </ul>
+        </nav>
+        <form id="search-form" class="search-form">
+            <input type="text" id="city-input" placeholder="Enter location name">
+            <ul id="suggestions-list" class="suggestions-list"></ul>
+            <button type="submit" id="search-button">Search</button>
+        </form>
+    </header>
+
+    <main class="main-content">
+        <section id="current-weather" class="weather-section">
+            <h2 class="section-title">Current Weather</h2>
+            <div id="weather-details" class="weather-details">
+                
+            </div>
+        </section>
+
+        <section id="forecast" class="forecast-section">
+            <h2 class="section-title">3-Hour Forecast for 5 Days</h2>
+            <div id="forecast-details" class="forecast-details">
+                
+            </div>
+        </section>
+
+        <section id="maps" class="maps-section">
+            <h2 class="section-title">Basic Weather Maps</h2>
+            <div id="weather-map" class="weather-map">
+                <div id="map" style="height: 400px;"></div>
+                <div id="weather-details">
+                    
+                </div>
+                <div id="forecast-details">
+                    
+                </div>
+            </div>
+        </section>
+
+        
+            <section id="sunrise-sunset-details" class="sunrise-sunset-details">
+                
+           
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2024 Weathernaut. All rights reserved.</p>
+    </footer>
+    <script src="index.js"></script>
+    <script src="./script.js"></script>
+    
+</body>
+</html>
