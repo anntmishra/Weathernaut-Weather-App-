@@ -66,7 +66,7 @@ function displayCurrentWeather(data) {
             weatherIcon = '<img src="./images/snowy.png" alt="Snow">';
             break;
         default:
-            weatherIcon = '<img src="./images/sun.png" alt="Weather">';
+            weatherIcon = '<img src="./images/Weather clouds.png" alt="Weather">';
             break;
     }
     const weatherHtml = `
