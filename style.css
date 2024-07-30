@@ -15,7 +15,7 @@ body {
     background-attachment: fixed;
     background-repeat: no-repeat;
     background-color: rgba(0, 0, 0, 0.5);
-    mix-blend-mode: overlay;
+    
     transition: background-image 0.3s ease;
     animation: fadeIn 1s ease;
     
