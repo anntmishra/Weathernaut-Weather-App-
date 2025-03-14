@@ -2,15 +2,34 @@ var map = L.map('map').setView([0, 0], 2);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 
-require('dotenv').config();
+// Handle form submission
+document.addEventListener('DOMContentLoaded', function () {
+    const searchForm = document.getElementById('search-form');
+    const cityInput = document.getElementById('city-input');
 
-// Example environment variable usage
-const apiKey = process.env.API_KEY;
+    if (searchForm) {
+        searchForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const city = cityInput.value.trim();
+            if (city) {
+                // Call the fetchWeatherData function from index.js
+                if (typeof fetchWeatherData === 'function') {
+                    fetchWeatherData(city);
+                } else {
+                    console.error('fetchWeatherData function not found');
+                }
+            }
+        });
+    }
 
-// Ensure apiKey is defined before using it further in your code
-if (!apiKey) {
-    console.error('API_KEY is not defined in the environment variables.');
-    process.exit(1); // Exit the process if API_KEY is not defined
-}
+    // Set default city if none is searched yet
+    setTimeout(() => {
+        if (typeof fetchWeatherData === 'function' &&
+            document.getElementById('weather-details').innerHTML.trim() === '') {
+            fetchWeatherData('New York');
+        }
+    }, 1000);
+});
