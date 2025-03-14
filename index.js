@@ -1,5 +1,3 @@
-
-
 function fetchWeatherData(city) {
     const apiKey = 'aaa776b8602cae96a312c1e3c5c27b1c';
     const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
@@ -11,14 +9,12 @@ function fetchWeatherData(city) {
             displayCurrentWeather(data);
 
             const { lat, lon } = data.coord;
-            const currentTime = new Date().getTime() / 1000;
             const sunriseTime = data.sys.sunrise;
             const sunsetTime = data.sys.sunset;
 
-            if (currentTime > sunriseTime && currentTime < sunsetTime) {
-                document.body.style.backgroundImage = 'url("./images/bram-bergers-YHaNHQXFIhU-unsplash.jpg")';
-            } else {
-                document.body.style.backgroundImage = 'url("./images/bram-bergers-YHaNHQXFIhU-unsplash 2.jpg")';
+            // Set background based on time of day
+            if (typeof setDayNightBackground === 'function') {
+                setDayNightBackground(sunriseTime, sunsetTime);
             }
 
             L.marker([lat, lon])
@@ -30,8 +26,10 @@ function fetchWeatherData(city) {
             console.error('Error fetching current weather:', error);
             const weatherDetails = document.getElementById('weather-details');
             weatherDetails.innerHTML = `
-            <img src="./images/error.png" alt="Error">
-            <p>City not found or error fetching data. Please try again.</p>
+            <div class="error-message">
+                <img src="./images/error.png" alt="Error" style="width: 80px; height: 80px; margin-bottom: 1rem;">
+                <p>City not found or error fetching data. Please try again.</p>
+            </div>
             `;
         });
 
@@ -48,65 +46,192 @@ function fetchWeatherData(city) {
 function displayCurrentWeather(data) {
     const weatherDetails = document.getElementById('weather-details');
     const weatherCondition = data.weather[0].main.toLowerCase();
-    let weatherIcon;
+    let weatherIconSrc;
+
+    // Get current time period
+    const timePeriod = document.body.getAttribute('data-time-period') || 'day';
+
+    // Determine the appropriate weather icon based on condition and time of day
     switch (weatherCondition) {
         case 'clear':
-            weatherIcon = '<img src="./images/clear-sky.png" alt="Clear">';
+            if (timePeriod === 'night') {
+                weatherIconSrc = './images/clear-night.png';
+            } else {
+                weatherIconSrc = './images/clear-sky.png';
+            }
             break;
         case 'clouds':
-            weatherIcon = '<img src="./images/clouds.png" alt="Cloudy">';
+            if (timePeriod === 'night') {
+                weatherIconSrc = './images/cloudy-night.png';
+            } else {
+                weatherIconSrc = './images/clouds.png';
+            }
             break;
         case 'mist':
-            weatherIcon = '<img src="./images/mist.png" alt="Mist">';
+        case 'haze':
+        case 'fog':
+            weatherIconSrc = './images/mist.png';
             break;
         case 'rain':
-            weatherIcon = '<img src="./images/heavy-rain.png" alt="Rain">';
+        case 'drizzle':
+            weatherIconSrc = './images/heavy-rain.png';
             break;
         case 'snow':
-            weatherIcon = '<img src="./images/snowy.png" alt="Snow">';
+            weatherIconSrc = './images/snowy.png';
+            break;
+        case 'thunderstorm':
+            weatherIconSrc = './images/thunderstorm.png';
             break;
         default:
-            weatherIcon = '<img src="./images/Weather clouds.png" alt="Weather">';
+            weatherIconSrc = './images/Weather clouds.png';
             break;
     }
+
+    // If the image doesn't exist, fallback to default
+    const img = new Image();
+    img.onerror = function () {
+        weatherIconSrc = './images/Weather clouds.png';
+    };
+    img.src = weatherIconSrc;
+
+    // Format sunrise and sunset times
+    const sunriseTime = new Date(data.sys.sunrise * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const sunsetTime = new Date(data.sys.sunset * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    // Get time period specific class
+    const timePeriodClass = `time-${timePeriod}`;
+
+    // Create the HTML for the current weather display
     const weatherHtml = `
-        <h2 style="font-size: 24px">${data.name}, ${data.sys.country}</h2>
-        <p style="font-size: 18px">Temperature: ${data.main.temp}°C</p>
-        <p style="font-size: 18px">Weather: ${data.weather[0].description}</p>
-        <p style="font-size: 18px">Sunrise: ${new Date(data.sys.sunrise * 1000).toLocaleTimeString()}</p>
-        <p style="font-size: 18px">Sunset: ${new Date(data.sys.sunset * 1000).toLocaleTimeString()}</p>
-        <div class="weather-info">
-            <div class="weather-info-item">
-                <p style="font-size: 18px">Wind Speed: ${data.wind.speed} m/s</p>
+        <div class="current-weather-container ${timePeriodClass}">
+            <div class="current-location">${data.name}, ${data.sys.country}</div>
+            <div class="current-weather-content">
+                <div class="current-weather-primary">
+                    <div class="current-temp">${Math.round(data.main.temp)}°C</div>
+                    <div class="current-condition">${data.weather[0].description}</div>
+                    <div class="current-weather-secondary">
+                        <div class="current-weather-detail">
+                            <i class="fas fa-wind"></i>
+                            <div>
+                                <div class="current-weather-detail-label">Wind Speed</div>
+                                <div class="current-weather-detail-value">${data.wind.speed} m/s</div>
+                            </div>
+                        </div>
+                        <div class="current-weather-detail">
+                            <i class="fas fa-tint"></i>
+                            <div>
+                                <div class="current-weather-detail-label">Humidity</div>
+                                <div class="current-weather-detail-value">${data.main.humidity}%</div>
+                            </div>
+                        </div>
+                        <div class="current-weather-detail">
+                            <i class="fas fa-compress-arrows-alt"></i>
+                            <div>
+                                <div class="current-weather-detail-label">Pressure</div>
+                                <div class="current-weather-detail-value">${data.main.pressure} hPa</div>
+                            </div>
+                        </div>
+                        <div class="current-weather-detail">
+                            <i class="fas fa-eye"></i>
+                            <div>
+                                <div class="current-weather-detail-label">Visibility</div>
+                                <div class="current-weather-detail-value">${(data.visibility / 1000).toFixed(1)} km</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <img src="${weatherIconSrc}" alt="${data.weather[0].description}" class="current-weather-image">
             </div>
-            <div class="weather-info-item">
-                <p style="font-size: 18px">Humidity: ${data.main.humidity}%</p>
+            <div class="sun-times">
+                <div class="sun-time-item">
+                    <i class="fas fa-sun"></i>
+                    <div>
+                        <div class="sun-time-label">Sunrise</div>
+                        <div class="sun-time-value">${sunriseTime}</div>
+                    </div>
+                </div>
+                <div class="sun-time-item">
+                    <i class="fas fa-moon"></i>
+                    <div>
+                        <div class="sun-time-label">Sunset</div>
+                        <div class="sun-time-value">${sunsetTime}</div>
+                    </div>
+                </div>
             </div>
         </div>
-        ${weatherIcon}
     `;
+
     weatherDetails.innerHTML = weatherHtml;
+
+    // Remove the separate sunrise-sunset section since it's now integrated
+    const sunriseSunsetSection = document.getElementById('sunrise-sunset-details');
+    if (sunriseSunsetSection) {
+        sunriseSunsetSection.innerHTML = '';
+    }
 }
 
 function displayForecast(data) {
     const forecastDetails = document.getElementById('forecast-details');
     forecastDetails.innerHTML = '';
 
+    // Get current time period
+    const timePeriod = document.body.getAttribute('data-time-period') || 'day';
+
+    // Get forecasts for the next 5 days at noon
     const forecasts = data.list.filter(item => item.dt_txt.includes('12:00:00'));
+
     forecasts.forEach(forecast => {
         const date = new Date(forecast.dt * 1000);
+        const weatherCondition = forecast.weather[0].main.toLowerCase();
+        let weatherIconSrc;
+
+        // Determine the appropriate weather icon
+        switch (weatherCondition) {
+            case 'clear':
+                weatherIconSrc = './images/clear-sky.png';
+                break;
+            case 'clouds':
+                weatherIconSrc = './images/clouds.png';
+                break;
+            case 'mist':
+            case 'haze':
+            case 'fog':
+                weatherIconSrc = './images/mist.png';
+                break;
+            case 'rain':
+            case 'drizzle':
+                weatherIconSrc = './images/heavy-rain.png';
+                break;
+            case 'snow':
+                weatherIconSrc = './images/snowy.png';
+                break;
+            case 'thunderstorm':
+                weatherIconSrc = './images/thunderstorm.png';
+                break;
+            default:
+                weatherIconSrc = './images/Weather clouds.png';
+                break;
+        }
+
+        // Create forecast card with time period class
         const forecastHtml = `
-            <div class="forecast-card">
-                <h3>${date.toLocaleDateString('en-US', { weekday: 'short' })}</h3>
-                <p>Temperature: ${forecast.main.temp}°C</p>
-                <p>Weather: ${forecast.weather[0].description}</p>
+            <div class="forecast-card time-${timePeriod}">
+                <div class="forecast-date">${date.toLocaleDateString('en-US', { weekday: 'short' })}</div>
+                <div class="forecast-time">${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</div>
+                <img src="${weatherIconSrc}" alt="${forecast.weather[0].description}" class="forecast-icon">
+                <div class="forecast-temp">${Math.round(forecast.main.temp)}°C</div>
+                <div class="forecast-description">${forecast.weather[0].description}</div>
+                <div class="forecast-details-mini">
+                    <span><i class="fas fa-tint"></i> ${forecast.main.humidity}%</span>
+                    <span><i class="fas fa-wind"></i> ${forecast.wind.speed} m/s</span>
+                </div>
             </div>
         `;
         forecastDetails.innerHTML += forecastHtml;
     });
 }
 
-document.getElementById('search-form').addEventListener('submit', function(event) {
+document.getElementById('search-form').addEventListener('submit', function (event) {
     event.preventDefault();
     const city = document.getElementById('city-input').value;
     fetchWeatherData(city);

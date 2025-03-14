@@ -1,73 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title src="./images/icon.png">Weathernaut</title>
-    
+    <title>Weathernaut - Elegant Weather App</title>
+    <link rel="icon" href="./images/icon.png" type="image/png">
     <link rel="stylesheet" href="./style.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 </head>
+
 <body>
-    
     <header class="header">
         <div class="logo">Weathernaut</div>
+        <div id="time-indicator" class="time-indicator">
+            <i class="fas fa-sun"></i> <span id="time-period-text">Day</span>
+        </div>
         <nav class="navigation">
             <ul>
                 <li><a href="#current-weather">Current Weather</a></li>
                 <li><a href="#forecast">Forecast</a></li>
                 <li><a href="#maps">Weather Maps</a></li>
-                
+                <li><a href="#air-quality">Air Quality</a></li>
             </ul>
         </nav>
-        <form id="search-form" class="search-form">
-            <input type="text" id="city-input" placeholder="Enter location name">
-            <ul id="suggestions-list" class="suggestions-list"></ul>
-            <button type="submit" id="search-button">Search</button>
-        </form>
+        <div class="search-container">
+            <form id="search-form" class="search-form">
+                <input type="text" id="city-input" placeholder="Search for a city...">
+                <ul id="suggestions-list" class="suggestions-list"></ul>
+                <button type="submit" id="search-button">Search</button>
+            </form>
+            <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
     </header>
 
     <main class="main-content">
         <section id="current-weather" class="weather-section">
             <h2 class="section-title">Current Weather</h2>
             <div id="weather-details" class="weather-details">
-                
+                <!-- Weather details will be populated by JavaScript -->
             </div>
         </section>
 
         <section id="forecast" class="forecast-section">
-            <h2 class="section-title">3-Hour Forecast for 5 Days</h2>
+            <h2 class="section-title">5-Day Forecast</h2>
             <div id="forecast-details" class="forecast-details">
-                
+                <!-- Forecast details will be populated by JavaScript -->
             </div>
         </section>
 
         <section id="maps" class="maps-section">
-            <h2 class="section-title">Basic Weather Maps</h2>
+            <h2 class="section-title">Weather Maps</h2>
+            <div class="map-controls">
+                <button class="map-control-btn active" data-layer="temp">Temperature</button>
+                <button class="map-control-btn" data-layer="precipitation">Precipitation</button>
+                <button class="map-control-btn" data-layer="wind">Wind</button>
+                <button class="map-control-btn" data-layer="clouds">Clouds</button>
+            </div>
             <div id="weather-map" class="weather-map">
-                <div id="map" style="height: 400px;"></div>
-                <div id="weather-details">
-                    
-                </div>
-                <div id="forecast-details">
-                    
-                </div>
+                <div id="map"></div>
             </div>
         </section>
 
-        
-            <section id="sunrise-sunset-details" class="sunrise-sunset-details">
-                
-           
+        <section id="sunrise-sunset-details" class="sunrise-sunset-details">
+            <!-- Sunrise/sunset details will be populated by JavaScript -->
+        </section>
+
+        <section id="air-quality" class="air-quality-section">
+            <h2 class="section-title">Air Quality Index</h2>
+            <div id="air-quality-container" class="air-quality-container">
+                <!-- Air quality details will be populated by JavaScript -->
+                <div class="aqi-gauge">
+                    <!-- Gauge visualization will be added by JavaScript -->
+                </div>
+                <div class="aqi-value">--</div>
+                <div class="aqi-label">Loading air quality data...</div>
+                <p class="aqi-description">
+                    The Air Quality Index (AQI) is a measure of how polluted the air is and what associated health
+                    effects might be a concern.
+                </p>
+                <div class="pollutants-grid">
+                    <!-- Pollutant details will be populated by JavaScript -->
+                </div>
+            </div>
         </section>
     </main>
 
     <footer class="footer">
-        <p>&copy; 2024 Weathernaut. All rights reserved.</p>
+        <div class="footer-content">
+            <div class="footer-logo">Weathernaut</div>
+            <div class="footer-links">
+                <a href="#current-weather">Weather</a>
+                <a href="#forecast">Forecast</a>
+                <a href="#maps">Maps</a>
+                <a href="#air-quality">Air Quality</a>
+            </div>
+            <p class="footer-copyright">&copy; 2024 Weathernaut. All rights reserved.</p>
+        </div>
     </footer>
+
     <script src="index.js"></script>
     <script src="./script.js"></script>
-    
 </body>
+
 </html>
