@@ -4,3 +4,7 @@
 
 # Ignore CSS map files
 *.css.map
+
+# Don't ignore editor configuration
+!.vscode/
+!.hide
