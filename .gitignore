@@ -1,5 +1,6 @@
-# Ignore CSS files
-*.css
+# CSS files are now tracked in the repository
+# Uncomment the following lines if you want to ignore specific CSS files
+# *.css
 
 # Ignore CSS map files
 *.css.map
